@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <title>Dashboard Absensi RFID</title>
+  <meta charset="UTF-8">
+  <title>Absensi RFID</title>
 
   <!-- HTMX -->
   <script src="https://unpkg.com/htmx.org@1.9.10"></script>
@@ -11,43 +11,60 @@
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bg-slate-100 min-h-screen">
-  <div id="modal"></div>
-  <div class="max-w-6xl mx-auto p-6">
+<body class="bg-slate-100" hx-boost="false">
+
+<div class="flex min-h-screen">
+
+  <!-- SIDEBAR -->
+  <aside id="sidebar"
+    class="bg-slate-900 text-white w-16 hover:w-56 transition-all duration-300 group flex flex-col">
+
+    <!-- LOGO -->
+    <div class="p-4 text-lg font-bold text-center border-b border-slate-700">
+      <span class="group-hover:hidden">📡</span>
+      <span class="hidden group-hover:block">Absensi RFID</span>
+    </div>
+
+    <!-- MENU -->
+    <nav class="flex-1 mt-4 space-y-1">
+
+      <a href="/" 
+        hx-boost="false"
+        class="flex items-center gap-3 px-4 py-3 hover:bg-slate-700">
+        <span>🏠</span>
+        <span class="hidden group-hover:block">Dashboard</span>
+      </a>
+
+      <a href="/siswa"
+        hx-boost="false"
+        class="flex items-center gap-3 px-4 py-3 hover:bg-slate-700">
+        <span>👨‍🎓</span>
+        <span class="hidden group-hover:block">Data Siswa</span>
+      </a>
+
+      <a href="/perhitungan"
+        hx-boost="false"
+        class="flex items-center gap-3 px-4 py-3 hover:bg-slate-700">
+        <span>📊</span>
+        <span class="hidden group-hover:block">Perhitungan</span>
+      </a>
+
+    </nav>
+
+    <!-- FOOTER -->
+    <div class="p-3 text-xs text-center text-slate-400">
+      <span class="hidden group-hover:block">
+        © 2026 RFID System
+      </span>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="flex-1 p-6">
     {{ template "content" . }}
-  </div>
+  </main>
+
+</div>
+
 </body>
-<div id="modal"></div>
 </html>
-
-
-<script>
-  function closeModal() {
-    document.getElementById("modal").innerHTML = "";
-    htmx.ajax("GET", "/api/absen/table", "#table");
-  }
-</script>
-
-
-
-<script>
-  const ws = new WebSocket("ws://localhost:8000/websocket");
-
-  ws.onopen = () => {
-    console.log("⚡ WS connected");
-  };
-
-  ws.onmessage = (event) => {
-    console.log("📡 Realtime update", event.data);
-
-    // Trigger HTMX reload table
-    htmx.ajax("GET", "/api/absen/table", "#table");
-
-    // reload device status
-    htmx.ajax("GET", "/api/device-status", "#device-status");
-  };
-
-  ws.onclose = () => {
-    console.log("❌ WS disconnected");
-  };
-</script>

@@ -13,6 +13,7 @@ func WebsocketHandler(c *websocket.Conn) {
 	log.Println("🟢 WS CONNECTED")
 
 	Clients[c] = true
+	
 	log.Println("TOTAL WS CLIENT:", len(Clients))
 
 	defer func() {

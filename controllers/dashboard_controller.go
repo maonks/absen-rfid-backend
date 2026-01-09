@@ -11,7 +11,7 @@ func Dashboard(db *gorm.DB) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		log.Println("OPEN DASHBOARD")
 
-		return c.Render("pages/dashboard", fiber.Map{
+		return c.Render("fragments/home_page", fiber.Map{
 			"Title": "Dashboard",
 		}, "layouts/main")
 

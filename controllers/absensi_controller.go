@@ -16,7 +16,7 @@ type HitungRow struct {
 	JamKerja    string `json:"jam_kerja"`
 }
 
-func PerhitunganPage(db *gorm.DB) fiber.Handler {
+func AbsensiPage(db *gorm.DB) fiber.Handler {
 
 	return func(c *fiber.Ctx) error {
 
@@ -63,10 +63,12 @@ func PerhitunganPage(db *gorm.DB) fiber.Handler {
 			ORDER BY tanggal DESC
 		`).Scan(&rows)
 
-		return c.Render("pages/perhitungan", fiber.Map{
+		return c.Render("fragments/absensi_page", fiber.Map{
 			"Title": "Perhitungan Kehadiran",
 			"Rows":  rows,
 		}, "layouts/main")
 
 	}
 }
+
+

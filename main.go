@@ -19,7 +19,7 @@ func main() {
 		log.Println(".ENV Tidak di temukan")
 	}
 
-	engine := html.New("./templates", ".html")
+	engine := html.New("./views", ".html")
 
 	engine.AddFunc("add", func(a, b int) int {
 		return a + b

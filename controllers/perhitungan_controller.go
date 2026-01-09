@@ -1,0 +1,77 @@
+package controllers
+
+import (
+	"log"
+
+	"github.com/gofiber/fiber/v2"
+	"gorm.io/gorm"
+)
+
+type HitungRow struct {
+	Nama        string `json:"nama"`
+	Tanggal     string `json:"tanggal"`
+	Masuk       string `json:"masuk"`
+	Pulang      string `json:"pulang"`
+	Terlambat   string `json:"terlambat"`
+	PulangCepat string `json:"pulang_cepat"`
+	Lembur      string `json:"lembur"`
+	JamKerja    string `json:"jam_kerja"`
+}
+
+func PerhitunganPage(db *gorm.DB) fiber.Handler {
+
+	return func(c *fiber.Ctx) error {
+
+		var rows []HitungRow
+
+		db.Raw(`
+			WITH daily AS (
+			  SELECT
+			    k.nama AS nama,
+			    DATE(a.waktu) AS tanggal,
+			    MIN(a.waktu) AS masuk,
+			    MAX(a.waktu) AS pulang
+			  FROM absens a
+			  LEFT JOIN kartus k ON k.uid = a.uid
+			  GROUP BY k.nama, DATE(a.waktu)
+			)
+			SELECT
+			  nama,
+			  tanggal::text AS tanggal,
+			  to_char(masuk, 'HH24:MI:SS') AS masuk,
+			  to_char(pulang, 'HH24:MI:SS') AS pulang,
+
+			  CASE
+			    WHEN masuk::time > '07:00:00'
+			      THEN to_char(masuk::time - '07:00:00'::time, 'HH24:MI:SS')
+			    ELSE '-'
+			  END AS terlambat,
+
+			  CASE
+			    WHEN pulang::time < '16:00:00'
+			      THEN to_char('16:00:00'::time - pulang::time, 'HH24:MI:SS')
+			    ELSE '-'
+			  END AS pulang_cepat,
+			  
+			  CASE
+				WHEN pulang::time > '16:00:00'
+					THEN to_char(pulang::time - '16:00:00'::time, 'HH24:MI:SS')
+				ELSE '-'
+				END AS lembur,
+
+
+			  to_char(pulang - masuk, 'HH24:MI:SS') AS jam_kerja
+			FROM daily
+			ORDER BY tanggal DESC
+		`).Scan(&rows)
+
+		// 🔎 DEBUG SEKALI SAJA
+		log.Println("PERHITUNGAN ROWS:", len(rows))
+
+		return c.Render("pages/perhitungan", fiber.Map{
+			"Title": "Perhitungan Kehadiran",
+			"Rows":  rows,
+		}, "layouts/main")
+
+	}
+}

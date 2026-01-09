@@ -29,7 +29,7 @@ func DeviceStatus(db *gorm.DB) fiber.Handler {
 			})
 		}
 
-		return c.Render("device_status", res)
+		return c.Render("components/device_status", res)
 
 	}
 }

@@ -94,7 +94,7 @@ func SearchAbsen(db *gorm.DB) fiber.Handler {
 		LIMIT 50
 	`).Scan(&rows)
 
-		return c.Render("table", fiber.Map{
+		return c.Render("fragments/table", fiber.Map{
 			"Rows": rows,
 		})
 	}

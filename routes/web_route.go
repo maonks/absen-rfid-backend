@@ -12,6 +12,6 @@ func WebRoutes(app *fiber.App, db *gorm.DB) {
 	app.Get("/", controllers.Dashboard(db))
 	app.Get("/websocket", websocket.New(controllers.WebsocketHandler))
 
-	// app.Get("/perhitungan", controllers.PerhitunganPage(db))
+	app.Get("/perhitungan", controllers.PerhitunganPage(db))
 
 }

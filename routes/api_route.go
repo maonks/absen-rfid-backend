@@ -2,13 +2,17 @@ package routes
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/maonks/absen-rfid-backend/controllers"
+	webcontroller "github.com/maonks/absen-rfid-backend/controllers"
 	"gorm.io/gorm"
 )
 
 func AbsenRoute(app *fiber.App, db *gorm.DB) {
 
-	app.Post("/api/absen", controllers.CreateAbsen(db))	
-	app.Post("/api/kartu/:uid", controllers.UpdateKartu(db))	
+	app.Post("/api/absen", webcontroller.CreateAbsen(db))
+
+	//ini yang nampilkan hasil tap
+	app.Get("/api/absen/table", webcontroller.RealtimeAbsen(db))
+
+	app.Get("/api/home/row/:uid", webcontroller.HomeRow(db))
 
 }

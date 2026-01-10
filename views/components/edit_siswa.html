@@ -1,0 +1,208 @@
+<div class="fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
+
+  <div class="bg-white w-full max-w-2xl mx-3
+              rounded-lg shadow-lg p-4">
+
+    <!-- HEADER -->
+    <div class="flex justify-between items-center mb-3">
+      <h3 class="text-sm font-semibold">
+        ✏️ Edit Data Siswa
+      </h3>
+      <button
+        type="button"
+        onclick="closeModal()"
+        class="text-gray-400 hover:text-gray-600"
+      >
+        ✕
+      </button>
+    </div>
+
+    <!-- FORM -->
+    <form
+      hx-post="/siswa/{{ .ID }}/update"
+      hx-target="#modal"
+      hx-swap="innerHTML"
+      class="grid grid-cols-1 md:grid-cols-2 gap-3
+             text-[11px] md:text-sm"
+    >
+      <!-- ID -->
+      <div>
+        <label class="block text-gray-600 mb-1">ID</label>
+          <input
+            value="{{ .Siswa.ID }}"
+            readonly
+            class="w-full border rounded px-3 py-2 bg-gray-100 text-gray-500"
+          >
+      </div>
+      <!-- NIS -->
+      <div>
+        <label class="block text-gray-600 mb-1">NIS</label>
+        <input
+          name="nis"
+          value="{{ .Siswa.NIS }}"
+          required
+          class="w-full border rounded px-3 py-2 font-mono"
+        >
+      </div>
+
+      <!-- NAMA -->
+      <div>
+        <label class="block text-gray-600 mb-1">Nama</label>
+        <input
+          name="nama"
+          value="{{ .Siswa.Nama }}"
+          required
+          class="w-full border rounded px-3 py-2"
+        >
+      </div>
+
+      <!-- 🔥 KARTU RFID (BARU) -->
+      <div>
+        <label class="block text-gray-600 mb-1">
+          Kartu RFID
+        </label>
+
+        <select
+          name="kartu_id"
+          class="w-full border rounded px-3 py-2 font-mono"
+        >
+          <option value="">-- Pilih Kartu --</option>
+
+          {{ range .KartuKosong }}
+          <option value="{{ .ID }}">
+            {{ .UID }}
+          </option>
+          {{ end }}
+        </select>
+
+        <p class="text-[10px] text-gray-400 mt-1">
+          Hanya kartu yang belum terdaftar ke siswa
+        </p>
+      </div>
+
+      <!-- JENIS KELAMIN -->
+      <div>
+        <label class="block text-gray-600 mb-1">Jenis Kelamin</label>
+        <select
+          name="jenis_kelamin"
+          class="w-full border rounded px-3 py-2"
+        >
+          <option value="L" {{ if eq .Siswa.JenisKelamin "L" }}selected{{ end }}>
+            Laki-laki
+          </option>
+          <option value="P" {{ if eq .Siswa.JenisKelamin "P" }}selected{{ end }}>
+            Perempuan
+          </option>
+        </select>
+      </div>
+
+      <!-- TEMPAT LAHIR -->
+      <div>
+        <label class="block text-gray-600 mb-1">Tempat Lahir</label>
+        <input
+          name="tempat_lahir"
+          value="{{ .Siswa.TempatLahir }}"
+          class="w-full border rounded px-3 py-2"
+        >
+      </div>
+
+      <!-- TANGGAL LAHIR -->
+      <div>
+        <label class="block text-gray-600 mb-1">Tanggal Lahir</label>
+        <input
+          type="date"
+          name="tanggal_lahir"
+          value="{{ .Siswa.TanggalLahir.Format "2006-01-02" }}"
+          class="w-full border rounded px-3 py-2"
+        >
+      </div>
+
+      <!-- KELAS -->
+      <div>
+        <label class="block text-gray-600 mb-1">Kelas</label>
+        <input
+          name="kelas"
+          value="{{ .Siswa.Kelas }}"
+          class="w-full border rounded px-3 py-2"
+        >
+      </div>
+
+      <!-- JURUSAN -->
+      <div>
+        <label class="block text-gray-600 mb-1">Jurusan</label>
+        <input
+          name="jurusan"
+          value="{{ .Siswa.Jurusan }}"
+          class="w-full border rounded px-3 py-2"
+        >
+      </div>
+
+      <!-- ALAMAT -->
+      <div class="md:col-span-2">
+        <label class="block text-gray-600 mb-1">Alamat</label>
+        <textarea
+          name="alamat"
+          rows="2"
+          class="w-full border rounded px-3 py-2"
+        >{{ .Siswa.Alamat }}</textarea>
+      </div>
+
+      <!-- NAMA WALI -->
+      <div>
+        <label class="block text-gray-600 mb-1">Nama Wali</label>
+        <input
+          name="nama_wali"
+          value="{{ .Siswa.NamaWali }}"
+          class="w-full border rounded px-3 py-2"
+        >
+      </div>
+
+      <!-- NO HP -->
+      <div>
+        <label class="block text-gray-600 mb-1">No HP</label>
+        <input
+          name="no_hp"
+          value="{{ .Siswa.NoHP }}"
+          class="w-full border rounded px-3 py-2"
+        >
+      </div>
+
+      <!-- STATUS -->
+      <div>
+        <label class="block text-gray-600 mb-1">Status</label>
+        <select
+          name="status"
+          class="w-full border rounded px-3 py-2"
+        >
+          <option value="aktif" {{ if eq .Siswa.Status "aktif" }}selected{{ end }}>
+            Aktif
+          </option>
+          <option value="nonaktif" {{ if eq .Siswa.Status "nonaktif" }}selected{{ end }}>
+            Nonaktif
+          </option>
+        </select>
+      </div>
+
+      <!-- ACTION -->
+      <div class="md:col-span-2 flex justify-end gap-2 pt-2">
+        <button
+          type="button"
+          onclick="closeModal()"
+          class="px-3 py-2 text-gray-600"
+        >
+          Batal
+        </button>
+
+        <button
+          type="submit"
+          class="px-4 py-2 bg-blue-600 text-white rounded"
+        >
+          Simpan Perubahan
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+
+</div>

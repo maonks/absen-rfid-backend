@@ -1,4 +1,4 @@
-package controllers
+package webcontroller
 
 import (
 	"github.com/gofiber/fiber/v2"
@@ -17,7 +17,6 @@ type HitungRow struct {
 }
 
 func AbsensiPage(db *gorm.DB) fiber.Handler {
-
 	return func(c *fiber.Ctx) error {
 
 		var rows []HitungRow
@@ -25,13 +24,14 @@ func AbsensiPage(db *gorm.DB) fiber.Handler {
 		db.Raw(`
 			WITH daily AS (
 			  SELECT
-			    k.nama AS nama,
+			    s.nama AS nama,
 			    DATE(a.waktu) AS tanggal,
 			    MIN(a.waktu) AS masuk,
 			    MAX(a.waktu) AS pulang
 			  FROM absens a
-			  LEFT JOIN kartus k ON k.uid = a.uid
-			  GROUP BY k.nama, DATE(a.waktu)
+			  JOIN kartus k ON k.uid = a.uid
+			  JOIN siswas s ON s.id = k.siswa_id
+			  GROUP BY s.nama, DATE(a.waktu)
 			)
 			SELECT
 			  nama,
@@ -50,25 +50,21 @@ func AbsensiPage(db *gorm.DB) fiber.Handler {
 			      THEN to_char('16:00:00'::time - pulang::time, 'HH24:MI:SS')
 			    ELSE '-'
 			  END AS pulang_cepat,
-			  
-			  CASE
-				WHEN pulang::time > '16:00:00'
-					THEN to_char(pulang::time - '16:00:00'::time, 'HH24:MI:SS')
-				ELSE '-'
-				END AS lembur,
 
+			  CASE
+			    WHEN pulang::time > '16:00:00'
+			      THEN to_char(pulang::time - '16:00:00'::time, 'HH24:MI:SS')
+			    ELSE '-'
+			  END AS lembur,
 
 			  to_char(pulang - masuk, 'HH24:MI:SS') AS jam_kerja
 			FROM daily
-			ORDER BY tanggal DESC
+			ORDER BY tanggal DESC, nama
 		`).Scan(&rows)
 
-		return c.Render("fragments/absensi_page", fiber.Map{
+		return c.Render("pages/absensi_page", fiber.Map{
 			"Title": "Perhitungan Kehadiran",
 			"Rows":  rows,
 		}, "layouts/main")
-
 	}
 }
-
-

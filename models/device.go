@@ -5,7 +5,7 @@ import (
 )
 
 type Device struct {
-	Id       uint   `gorm:"primaryKey"`
+	ID       uint   `gorm:"primaryKey"`
 	DeviceId string `gorm:"uniqueIndex"`
 	LastSeen time.Time
 }

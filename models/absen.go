@@ -4,7 +4,7 @@ import "time"
 
 type Absen struct {
 	ID       uint `gorm:"primaryKey"`
-	Uid      string
+	UID      string
 	DeviceId string
 	Waktu    time.Time `gorm:"type:timestamp"`
 }

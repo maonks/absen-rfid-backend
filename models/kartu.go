@@ -1,7 +1,14 @@
 package models
 
+import "time"
+
 type Kartu struct {
-	Id   uint   `gorm:"primaryKey"`
-	Uid  string `gorm:"uniqueIndex"`
-	Nama string
+	ID        uint   `gorm:"primaryKey"`
+	UID       string `gorm:"unique;not null"`
+	SiswaID   *uint  `gorm:"unique"` // nullable
+	CreatedAt time.Time
+	UpdatedAt time.Time
+
+	// RELATION
+	Siswa *Siswa
 }

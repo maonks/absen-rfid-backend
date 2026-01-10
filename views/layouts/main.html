@@ -45,20 +45,21 @@
 
     <!-- HEADER -->
     <div class="p-4 text-lg font-bold text-center border-b border-slate-700">
-      📡 Absensi RFID
+      👤❌ Absensi Online
     </div>
 
     <!-- MENU -->
     <nav class="flex-1 mt-4 space-y-1">
 
+
       <a href="/" class="flex items-center gap-3 px-4 py-3 hover:bg-slate-700 transition">
         <span class="text-lg">🏠</span>
-        <span>Monitoring</span>
+        <span>Home Dashboard</span>
       </a>
 
-      <a href="/riwayat" class="flex items-center gap-3 px-4 py-3 hover:bg-slate-700 transition">
-        <span class="text-lg">👨‍🎓</span>
-        <span>Riwayat Absensi</span>
+      <a href="/monitor" class="flex items-center gap-3 px-4 py-3 hover:bg-slate-700 transition">
+        <span class="text-lg">📡</span>
+        <span>Monitoring Log</span>
       </a>
 
       <a href="/absensi" class="flex items-center gap-3 px-4 py-3 hover:bg-slate-700 transition">
@@ -66,11 +67,19 @@
         <span>Detail Absensi</span>
       </a>
 
+      <a href="/siswa" class="flex items-center gap-3 px-4 py-3 hover:bg-slate-700 transition">
+        <span class="text-lg">👨‍🎓</span>
+        <span>Data Siswa</span>
+      </a>
+         <a href="/kartu" class="flex items-center gap-3 px-4 py-3 hover:bg-slate-700 transition">
+        <span class="text-lg">💳</span>
+        <span>Daftar Kartu</span>
+      </a>
     </nav>
 
     <!-- FOOTER -->
     <div class="p-3 text-xs text-center text-slate-400 border-t border-slate-700">
-      © 2026 RFID System
+      © 2026 MaonksCode
     </div>
 
   </aside>
@@ -132,15 +141,45 @@
 </script>
 
 <script>
-  const ws = new WebSocket("ws://wan2.adamulti.com:8000/websocket");
+  const ws = new WebSocket("ws://192.168.1.100:8000/websocket");
 
-  ws.onmessage = () => {
+  ws.onmessage = (e) => {
     const absenTable = document.getElementById("absen-table");
-    if (absenTable) htmx.trigger(absenTable, "reload");
+    if (absenTable) {
+      htmx.trigger(absenTable, "reload");
+    }
 
-    const kehadiran = document.getElementById("kehadiran-wrapper");
-    if (kehadiran) htmx.trigger(kehadiran, "reload");
+    let data;
+    try {
+      data = JSON.parse(e.data); // { uid: "XXXX" }
+    } catch {
+      return; // jika bukan JSON, abaikan
+    }
+
+    if (!data.uid) return;
+
+    // coba cari row siswa
+    const row = document.getElementById("row-" + data.uid);
+
+    if (row) {
+      // siswa sudah ada → refresh BARIS SAJA
+      htmx.trigger(row, "refresh");
+    } else {
+      // siswa baru → reload wrapper (tambah baris)
+      const home = document.getElementById("home-realtime");
+      if (home) {
+        htmx.trigger(home, "reload");
+      }
+    }
   };
+</script>
+
+
+<script>
+  function closeModal() {
+    const modal = document.getElementById("modal");
+    if (modal) modal.innerHTML = "";
+  }
 </script>
 
 </body>

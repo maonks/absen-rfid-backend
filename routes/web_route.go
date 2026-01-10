@@ -3,19 +3,28 @@ package routes
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/websocket/v2"
-	"github.com/maonks/absen-rfid-backend/controllers"
+	webcontroller "github.com/maonks/absen-rfid-backend/controllers"
+	apicontroller "github.com/maonks/absen-rfid-backend/controllers/api_controller"
 	"gorm.io/gorm"
 )
 
 func WebRoutes(app *fiber.App, db *gorm.DB) {
 
-	app.Get("/websocket", websocket.New(controllers.WebsocketHandler))
+	app.Get("/websocket", websocket.New(apicontroller.WebsocketHandler))
 
-	app.Get("/", controllers.Dashboard(db))
-	app.Get("/absensi", controllers.AbsensiPage(db))
-	app.Get("/api/absen/table", controllers.SearchAbsen(db))
-	app.Get("/api/kartu/:uid/edit", controllers.EditModal(db))
+	app.Get("/", webcontroller.HomePage(db))
 
-	app.Get("/riwayat", controllers.RiwayatPage(db))
+	app.Get("/absensi", webcontroller.AbsensiPage(db))
+
+	app.Get("/monitor", webcontroller.MonitorAbsen(db))
+
+	app.Get("/siswa", webcontroller.SiswaPage(db))
+	app.Get("/siswa/create", webcontroller.CreateSiswa(db))
+	app.Post("/siswa/store", webcontroller.StoreSiswa(db))
+
+	app.Get("/siswa/:id/edit", webcontroller.EditSiswa(db))
+	app.Post("/siswa/:id/update", webcontroller.UpdateSiswa(db))
+
+	app.Get("/kartu", webcontroller.KartuPage(db))
 
 }

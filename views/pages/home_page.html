@@ -1,9 +1,10 @@
 <div
-  id="kehadiran-wrapper"
-  hx-get="/riwayat/page/partial"
+  id="home-realtime"
+  hx-get="/api/home/realtime"
   hx-trigger="reload"
-  hx-swap="innerHTML"
+  hx-swap="outerHTML"
 >
+</div>
 
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
@@ -47,7 +48,13 @@
 
           <tbody>
             {{ range $i, $r := .Hadir }}
-            <tr class="border-t border-slate-200 hover:bg-slate-100 transition">
+            <tr 
+              id="row-{{ $r.Uid }}"
+              hx-get="/api/home/row/{{ $r.Uid }}"
+              hx-trigger="refresh"
+              hx-swap="outerHTML"
+              class="border-t border-slate-200 hover:bg-slate-100 transition">
+
               <td class="py-1.5 px-2 text-center text-slate-600">
                 {{ add $i 1 }}
               </td>

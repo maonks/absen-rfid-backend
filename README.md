@@ -83,6 +83,8 @@ Teknologi yang digunakan
 - Fiber
 - GORM
 - PostgreSQL
+- HTMX
+- PWA
 - WebSocket
 - JWT Authentication
 - Excel Export (XLSX)
